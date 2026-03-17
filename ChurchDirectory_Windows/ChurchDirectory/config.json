@@ -1,0 +1,19 @@
+{
+  "church_name": "The Gathering Church",
+  "church_tagline": "Celebrating Jesus Together",
+  "church_address": "5921 SE 88th Ave, Portland, OR 97266",
+  "church_phone": "(503) 771-7379",
+  "church_email": "connect@gatheringcc.org",
+  "church_service": "Sundays at 10:00 am",
+  "directory_year": null,
+  "list_id": "4882459",
+  "membership_type_label": "Member",
+  "use_goes_by_name": true,
+  "entries_per_page": 4,
+  "photo_pool_size": 8,
+  "fuzzy_match_threshold": 92,
+  "pdf_engine": "weasyprint",
+  "max_run_logs": 10,
+  "keychain_service": "ChurchDirectoryGenerator",
+  "output_filename_format": "GatheringDirectory_{date}.html"
+}

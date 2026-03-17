@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ config.church_name }} — Directory {{ config.directory_year }}</title>
+<style>
+
+/* ── TOKENS ── */
+:root {
+  --burgundy:     #6B1E2E;
+  --cream:        #FAF7F2;
+  --cream-border: #DDD0BC;
+  --gold:         #B8944A;
+  --text-mid:     #4A3020;
+  --text-light:   #7A5E48;
+  --text-xlight:  #A08060;
+  --white:        #FFFFFF;
+}
+
+/* ── PAGE SETUP ── */
+/* Each PDF page = one 11x8.5" landscape sheet = two 5.5x8.5" booklet leaves */
+@page {
+  size: 11in 8.5in landscape;
+  margin: 0;
+}
+
+.sheet {
+  width:  11in;
+  height: 8.5in;
+  display: table;
+  page-break-after: always;
+}
+.sheet:last-child {
+  page-break-after: auto;
+}
+
+.leaf {
+  display: table-cell;
+  width: 5.5in;
+  height: 8.5in;
+  vertical-align: top;
+  background: var(--cream);
+  overflow: hidden;
+}
+
+/* ── FRONT COVER ── */
+.cover-leaf { background: var(--cream); }
+
+.cover-upper {
+  height: 4.25in;
+  background: var(--cream);
+  text-align: center;
+  padding-top: 1.4in;
+  box-sizing: border-box;
+}
+.cover-upper img { width: 3.2in; height: auto; }
+
+.cover-lower {
+  height: 4.25in;
+  background: var(--burgundy);
+  padding: 0.38in 0.5in 0.36in;
+  box-sizing: border-box;
+}
+.cover-lower-logo { display: block; height: 40px; width: auto; margin-bottom: 0.22in; }
+.cover-lower-label {
+  font-family: Lato, Arial, sans-serif;
+  font-weight: 300; font-size: 9.5pt;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55); margin-bottom: 0.12in;
+}
+.cover-lower-year {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700; font-size: 72pt; line-height: 1;
+  color: var(--white); margin-bottom: 0.08in;
+}
+.cover-lower-sub {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic; font-size: 14pt;
+  color: rgba(255,255,255,0.7); margin-bottom: 0.28in;
+}
+.cover-lower-rule { border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 0.18in; }
+.cover-lower-addr {
+  font-family: Lato, Arial, sans-serif;
+  font-weight: 300; font-size: 9pt; line-height: 2;
+  color: rgba(255,255,255,0.5); letter-spacing: 0.03em;
+}
+
+/* ── BACK COVER ── */
+.back-cover-leaf { background: var(--cream); }
+.back-topbar { height: 7px; background: var(--burgundy); }
+.back-body { text-align: center; padding: 1.6in 0.5in 0; background: var(--cream); }
+.back-logo { height: 56px; width: auto; opacity: 0.75; margin-bottom: 0.26in; }
+.back-tagline {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic; font-weight: 300; font-size: 12pt;
+  color: var(--text-light); margin-bottom: 0.24in;
+}
+.back-rule { width: 1.2in; border: none; border-top: 1px solid var(--cream-border); margin: 0 auto 0.24in; }
+.back-info {
+  font-family: Lato, Arial, sans-serif;
+  font-weight: 300; font-size: 10pt; line-height: 2;
+  color: var(--text-xlight); letter-spacing: 0.03em;
+}
+
+/* ── DIRECTORY PAGE ── */
+.dir-leaf {
+  padding: 0.42in 0.48in 0.36in;
+  box-sizing: border-box;
+  height: 8.5in;
+}
+
+.page-header {
+  border-bottom: 1.5pt solid var(--burgundy);
+  padding-bottom: 7pt; margin-bottom: 0;
+  display: table; width: 100%;
+}
+.ph-left {
+  display: table-cell;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600; font-size: 10pt;
+  color: var(--burgundy); letter-spacing: 0.08em;
+  text-transform: uppercase; vertical-align: bottom;
+}
+.ph-right {
+  display: table-cell; text-align: right;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic; font-size: 10pt;
+  color: var(--text-light); vertical-align: bottom;
+}
+
+.entry {
+  display: table; width: 100%;
+  height: 1.7in;
+  border-bottom: 1pt solid var(--cream-border);
+  box-sizing: border-box;
+}
+.entry:last-child { border-bottom: none; }
+
+.entry-photo-cell {
+  display: table-cell; width: 80pt;
+  vertical-align: middle; padding-right: 12pt;
+}
+.photo-circle {
+  width: 72pt; height: 72pt;
+  border-radius: 50%; overflow: hidden;
+  border: 2pt solid var(--cream-border);
+}
+.photo-circle img {
+  width: 72pt; height: 72pt;
+  object-fit: cover; display: block; border-radius: 50%;
+}
+.entry.household .photo-circle { border-color: rgba(184,148,74,0.55); }
+
+.entry-info-cell { display: table-cell; vertical-align: middle; }
+
+.entry-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600; font-size: 14pt;
+  color: var(--burgundy); line-height: 1.2; margin-bottom: 5pt;
+}
+
+.contact-row { display: table; width: 100%; margin-bottom: 3pt; }
+.contact-row:last-child { margin-bottom: 0; }
+.contact-icon {
+  display: table-cell; width: 14pt;
+  vertical-align: top; font-size: 9pt;
+  color: var(--gold); padding-top: 2pt;
+}
+.contact-text {
+  display: table-cell;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 11pt; line-height: 1.5;
+  color: var(--text-mid); vertical-align: top;
+}
+.contact-text.muted { color: var(--text-light); font-size: 10.5pt; }
+
+.page-footer {
+  border-top: 1pt solid var(--cream-border);
+  padding-top: 7pt; margin-top: 0;
+  display: table; width: 100%;
+}
+.pf-left {
+  display: table-cell;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic; font-size: 9pt;
+  color: var(--text-xlight); vertical-align: middle;
+}
+.pf-center {
+  display: table-cell; text-align: center;
+  font-family: Lato, Arial, sans-serif;
+  font-weight: 700; font-size: 10pt;
+  color: var(--text-light); letter-spacing: 0.06em; vertical-align: middle;
+}
+.pf-right {
+  display: table-cell; text-align: right;
+  font-family: Lato, Arial, sans-serif;
+  font-size: 9pt; color: var(--text-xlight);
+  letter-spacing: 0.04em; vertical-align: middle;
+}
+
+.entry-empty { display: table; width: 100%; height: 1.7in; }
+
+/* ── Print: force background colors and images ──────────────────────────── */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+{#
+  OUTPUT: sequential landscape sheets, each with two 5.5x8.5" leaves.
+  Sheet 1 = Cover sheet:  left=Back Cover, right=Front Cover
+  Remaining sheets = pairs of directory pages in reading order.
+  Print double-sided, fold, staple — done.
+  The printer pairs pages automatically in booklet/duplex mode.
+#}
+
+{# ── COVER SHEET: Back Cover (left) | Front Cover (right) ── #}
+<div class="sheet">
+
+  <div class="leaf back-cover-leaf">
+    <div class="back-topbar"></div>
+    <div class="back-body">
+      <img class="back-logo" src="{{ logo_dark }}" alt="{{ config.church_name }}">
+      <div class="back-tagline">{{ config.church_tagline }}</div>
+      <hr class="back-rule">
+      <div class="back-info">
+        {{ config.church_address }}<br>
+        {{ config.church_phone }}<br>
+        {{ config.church_email }}<br>
+        {{ config.church_service }}
+      </div>
+    </div>
+  </div>
+
+  <div class="leaf cover-leaf">
+    <div class="cover-upper">
+      <img src="{{ logo_dark }}" alt="{{ config.church_name }}">
+    </div>
+    <div class="cover-lower">
+      <img class="cover-lower-logo" src="{{ logo_white }}" alt="{{ config.church_name }}">
+      <div class="cover-lower-label">Church Directory</div>
+      <div class="cover-lower-year">{{ config.directory_year }}</div>
+      <div class="cover-lower-sub">Portland, Oregon</div>
+      <hr class="cover-lower-rule">
+      <div class="cover-lower-addr">
+        {{ config.church_address }} &nbsp;&middot;&nbsp; {{ config.church_phone }}<br>
+        {{ config.church_email }} &nbsp;&middot;&nbsp; {{ config.church_service }}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# ── DIRECTORY SHEETS: pairs of pages ── #}
+{% macro dir_page(page) %}
+{# Compute alphabetical range label for this page #}
+{% set first_letter = page.groups[0].last_name[0] | upper %}
+{% set last_letter  = page.groups[-1].last_name[0] | upper %}
+{% if first_letter == last_letter %}
+  {% set alpha_label = first_letter %}
+{% else %}
+  {% set alpha_label = first_letter ~ ' – ' ~ last_letter %}
+{% endif %}
+<div class="leaf">
+  <div class="dir-leaf">
+    <div class="page-header">
+      <span class="ph-left">{{ config.church_name }}</span>
+      <span class="ph-right">Directory {{ config.directory_year }}</span>
+    </div>
+    <div class="entries">
+      {% set ns = namespace(count=0) %}
+      {% for group in page.groups %}
+        {% for person in group.members %}
+        {% set ns.count = ns.count + 1 %}
+        <div class="entry {% if group.is_household %}household{% endif %}">
+          <div class="entry-photo-cell">
+            <div class="photo-circle">
+              {% if person.photo_path %}
+              <img src="{{ person.photo_path }}" alt="{{ person.first_name }} {{ person.last_name }}">
+              {% endif %}
+            </div>
+          </div>
+          <div class="entry-info-cell">
+            <div class="entry-name">{{ person.last_name }}, {{ person.first_name }}</div>
+            {% if person.address %}
+            <div class="contact-row">
+              <span class="contact-icon">&#8962;</span>
+              <span class="contact-text">{{ person.address.display }}</span>
+            </div>
+            {% endif %}
+            {% for phone in person.phones[:1] %}
+            <div class="contact-row">
+              <span class="contact-icon">&#9990;</span>
+              <span class="contact-text">{{ phone.number }}</span>
+            </div>
+            {% endfor %}
+            {% for email in person.emails[:1] %}
+            <div class="contact-row">
+              <span class="contact-icon">&#9993;</span>
+              <span class="contact-text muted">{{ email.address }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      {% endfor %}
+      {% for _ in range(entries_per_page - ns.count) %}
+      <div class="entry-empty"></div>
+      {% endfor %}
+    </div>
+    <div class="page-footer">
+      <span class="pf-left">{{ config.church_tagline }}</span>
+      <span class="pf-center">{{ alpha_label }}</span>
+      <span class="pf-right">Members Only</span>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% for i in range(0, pages|length, 2) %}
+<div class="sheet">
+  {{ dir_page(pages[i]) }}
+  {% if i + 1 < pages|length %}
+  {{ dir_page(pages[i + 1]) }}
+  {% else %}
+  <div class="leaf"></div>
+  {% endif %}
+</div>
+{% endfor %}
+
+</body>
+</html>
